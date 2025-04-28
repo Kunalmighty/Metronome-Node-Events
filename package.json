@@ -1,0 +1,13 @@
+{
+  "name": "metronome-node-api",
+  "version": "1.0.0",
+  "description": "NodeJS utility to send events to Metronome API.",
+  "main": "sendMetronomeEvent.js",
+  "scripts": {
+    "start": "node sendMetronomeEvent.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  }
+}
