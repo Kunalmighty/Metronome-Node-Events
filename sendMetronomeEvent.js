@@ -40,37 +40,39 @@ const exampleEvents = [
     "timestamp": "2025-04-25T14:30:00+00:00",
     "transaction_id": "0a167631-4c07-49f2-b6ef-c1f91a1325e5",
     "customer_id": "fe6a17b8-b4c1-4576-931a-86f002f48593",
-    "event_type": "ra9-compute-heartbeat",
+    "event_type": "claude_api_call",
     "properties": {
-      "cloud": "raindrop-blueshift-ra9",
+      "tokens": "42",
+      "model_name": "haiku",
       "cluster_id": "b1600b4c-ef72-4b67-bc27-eaccad4cbed2",
       "region": "us-west-1",
-      "duration_seconds": "3690"
+      "language": "English"
     }
   },
   {
     "timestamp": "2025-04-25T14:30:00+00:00",
     "transaction_id": "0a167631-4c07-49f2-b6ef-c1f91a1325e6",
     "customer_id": "fe6a17b8-b4c1-4576-931a-86f002f48593",
-    "event_type": "bigquery-compute-heartbeat",
+    "event_type": "claude_api_call",
     "properties": {
-      "cloud": "raindrop-bigquery",
+      "tokens": "4200",
+      "model_name": "sonnet",
       "cluster_id": "b1600b4c-ef72-4b67-bc27-eaccad4cbed2",
-      "region": "us-west-1",
-      "duration_seconds": "3690"
+      "region": "us-east-2",
+      "language": "English"
     }
   },
   {
     "timestamp": "2025-04-25T14:30:00+00:00",
     "transaction_id": "c012f5c8-e0a3-46ec-b4b4-9bf64949a355",
     "customer_id": "fe6a17b8-b4c1-4576-931a-86f002f48593",
-    "event_type": "ra9-storage-heartbeat",
+    "event_type": "claude_api_call",
     "properties": {
-      "cloud": "raindrop-blueshift-ra9",
+      "tokens": "42000",
+      "model_name": "opus",
       "cluster_id": "b1600b4c-ef72-4b67-bc27-eaccad4cbed2",
-      "table_id": "6820fb25-d381-488b-9e7a-261186d5ddd1",
-      "region": "us-west-1",
-      "mb_stored": "3096"
+      "region": "us-west-2",
+      "language": "English"
     }
   }
 ];
@@ -83,47 +85,70 @@ function createCustomEvents() {
     'b8dc7c5d-76cf-4b02-a156-2cf03b7bc145'
   ];
 
-  const eventTypes = [
-    'ra9-compute-heartbeat',
-    'ra9-storage-heartbeat',
-    'bigquery-compute-heartbeat'
+  const modelTypes = [
+    'haiku',
+    'sonnet',
+    'opus'
+  ];
+
+  const languages = [
+    'English',
+    'Spanish',
+    'French',
+    'German',
+    'Italian',
+    'Portuguese',
+    'Russian',
+    'Chinese',
+    'Japanese',
+    'Korean'
+  ];
+
+  const regions = [
+    'us-west-1',
+    'us-west-2',
+    'us-east-2',
+    'us-east-1',
+    'eu-west-1',
+    'eu-west-2'
   ];
 
   const events = [];
 
   for (const customerId of customers) {
-    for (const eventType of eventTypes) {
+    for (const modelType of modelTypes) {
       // Generate random date between April 1st and April 26th, 2025
-      const startDate = new Date('2025-04-01T00:00:00Z');
-      const endDate = new Date('2025-04-26T23:59:59Z');
+      const startDate = new Date('2025-05-01T00:00:00Z');
+      const endDate = new Date('2025-05-26T23:59:59Z');
       const randomTimestamp = new Date(
         startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime())
       );
 
       let properties = {
-        region: 'us-west-1'
+        region: regions[Math.floor(Math.random() * regions.length)],
       };
 
-      if (eventType === 'ra9-compute-heartbeat') {
-        properties.duration_seconds = Math.floor(Math.random() * 7200).toString();
-        properties.cloud = 'raindrop-blueshift-ra9';
+      if (modelType === 'haiku') {
+        properties.tokens = Math.floor(Math.random() * 10000).toString();
+        properties.model_name = 'haiku';
+        properties.language = languages[Math.floor(Math.random() * languages.length)];
         properties.cluster_id = crypto.randomUUID();
-      } else if (eventType === 'ra9-storage-heartbeat') {
-        properties.mb_stored = Math.floor(Math.random() * 10000).toString();
-        properties.cloud = 'raindrop-blueshift-ra9';
+      } else if (modelType === 'sonnet') {
+        properties.language = languages[Math.floor(Math.random() * languages.length)];
         properties.cluster_id = crypto.randomUUID();
-        properties.table_id = crypto.randomUUID();
-      } else if (eventType === 'bigquery-compute-heartbeat') {
-        properties.duration_seconds = Math.floor(Math.random() * 7200).toString();
-        properties.cloud = 'raindrop-bigquery';
+        properties.tokens = Math.floor(Math.random() * 10000).toString();
+        properties.model_name = 'sonnet';
+      } else if (modelType === 'opus') {
+        properties.tokens = Math.floor(Math.random() * 10000).toString();
+        properties.model_name = 'opus';
+        properties.language = languages[Math.floor(Math.random() * languages.length)];
         properties.cluster_id = crypto.randomUUID();
       }
-
       events.push({
         timestamp: randomTimestamp.toISOString(),
         transaction_id: crypto.randomUUID(),
         customer_id: customerId,
-        event_type: eventType,
+        event_type: 'claude_api_call',
         properties
       });
     }
